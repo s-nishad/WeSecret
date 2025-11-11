@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>We Secret</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      height: 100vh;
+      margin: 0;
+    }
+    #loginBox {
+      margin: auto;
+      width: 400px;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    #loginBox h2 {
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+    #loginBox input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    #loginBox input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    #loginBox button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #loginBox button:hover {
+      transform: translateY(-2px);
+    }
+    #app {
+      display: none;
+      flex: 1;
+      background: white;
+      margin: 20px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    #sidebar {
+      width: 350px;
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+    }
+    #sidebarHeader {
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #profileSection {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .profilePic {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: white;
+      color: #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      border: 3px solid rgba(255,255,255,0.3);
+    }
+    .profilePic img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    #profileName {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    #sidebarActions {
+      display: flex;
+      gap: 10px;
+    }
+    .iconBtn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+    .iconBtn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+    }
+    #tabBar {
+      display: flex;
+      border-bottom: 1px solid #e0e0e0;
+      background: #fafafa;
+    }
+    .tab {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      background: white;
+    }
+    #roomsList, #usersList {
+      list-style: none;
+      overflow-y: auto;
+      flex: 1;
+    }
+    #usersList {
+      display: none;
+    }
+    #roomsList li, #usersList li {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+    #roomsList li:hover, #usersList li:hover {
+      background: #f8f9fa;
+    }
+    #roomsList li.active {
+      background: #e8ebff;
+    }
+    .listItemPic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .listItemPic img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .listItemInfo {
+      flex: 1;
+    }
+    .listItemName {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 3px;
+    }
+    .listItemPreview {
+      font-size: 13px;
+      color: #999;
+    }
+    #chatArea {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+    }
+    #chatHeader {
+      padding: 15px 20px;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #chatHeader h3 {
+      color: #333;
+      font-size: 18px;
+    }
+    #backBtn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #emptyState {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 18px;
+    }
+    #messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+    }
+    .msg {
+      margin-bottom: 12px;
+      padding: 10px 15px;
+      border-radius: 18px;
+      max-width: 65%;
+      word-wrap: break-word;
+      display: block;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .you {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+      border-bottom-right-radius: 5px;
+    }
+    .other {
+      background: white;
+      color: #333;
+      align-self: flex-start;
+      margin-right: auto;
+      border-bottom-left-radius: 5px;
+    }
+    #inputArea {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid #e0e0e0;
+      background: white;
+      padding: 15px 20px;
+    }
+    #inputControls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    #messageInput {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 25px;
+      outline: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    #messageInput:focus {
+      border-color: #667eea;
+    }
+    .inputBtn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .inputBtn:hover {
+      transform: scale(1.1);
+    }
+    .inputBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #attachBtn {
+      background: #f0f0f0;
+      color: #667eea;
+    }
+    #filePreview {
+      display: none;
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 10px;
+      align-items: center;
+      gap: 10px;
+      border: 2px dashed #e0e0e0;
+    }
+    #filePreview.show {
+      display: flex;
+    }
+    .filePreviewContent {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .filePreviewIcon {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: white;
+      flex-shrink: 0;
+    }
+    .filePreviewIcon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .filePreviewInfo {
+      flex: 1;
+      min-width: 0;
+    }
+    .filePreviewName {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .filePreviewSize {
+      font-size: 12px;
+      color: #999;
+    }
+    .removeFileBtn {
+      background: #ff4444;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .fileAttachment {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      max-width: 300px;
+    }
+    .fileAttachment:hover {
+      background: rgba(255,255,255,1);
+      transform: translateY(-1px);
+    }
+    .you .fileAttachment {
+      background: rgba(255,255,255,0.2);
+    }
+    .you .fileAttachment:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .fileIcon {
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: white;
+      flex-shrink: 0;
+    }
+    .you .fileIcon {
+      background: rgba(255,255,255,0.3);
+    }
+    .fileIcon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .fileInfo {
+      flex: 1;
+      min-width: 0;
+    }
+    .fileName {
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .fileSize {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    .downloadIcon {
+      font-size: 18px;
+      opacity: 0.7;
+    }
+    .logoutBtn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+    .logoutBtn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .timestamp {
+      font-size: 11px;
+      color: rgba(0,0,0,0.4);
+      margin-top: 4px;
+      display: block;
+    }
+    .you .timestamp {
+      color: rgba(255,255,255,0.7);
+    }
+    
+    /* Profile Modal */
+    #profileModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    #profileModal.show {
+      display: flex;
+    }
+    .modalContent {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 450px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .modalHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    .modalHeader h2 {
+      color: #667eea;
+      margin: 0;
+    }
+    .closeBtn {
+      background: #f0f0f0;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #666;
+      transition: all 0.3s;
+    }
+    .closeBtn:hover {
+      background: #e0e0e0;
+      transform: rotate(90deg);
+    }
+    .profilePicUpload {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .profilePicPreview {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: bold;
+      margin: 0 auto 15px;
+      position: relative;
+      cursor: pointer;
+    }
+    .profilePicPreview img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .profilePicPreview:hover::after {
+      content: '📷';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .formGroup {
+      margin-bottom: 20px;
+    }
+    .formGroup label {
+      display: block;
+      margin-bottom: 8px;
+      color: #666;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .formGroup input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .formGroup input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .formGroup input:disabled {
+      background: #f5f5f5;
+      cursor: not-allowed;
+    }
+    .btnPrimary {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 10px;
+    }
+    .btnPrimary:hover {
+      transform: translateY(-2px);
+    }
+    .btnPrimary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      #app {
+        margin: 0;
+        border-radius: 0;
+        flex-direction: column;
+      }
+      #sidebar {
+        width: 100%;
+        max-height: 100vh;
+      }
+      #chatArea {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 100;
+        display: none !important;
+      }
+      #chatArea.active {
+        display: flex !important;
+      }
+      .modalContent {
+        width: 95%;
+        padding: 20px;
+      }
+      #sidebarHeader {
+        padding: 15px;
+      }
+      .profilePic {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      #profileName {
+        font-size: 14px;
+      }
+      .logoutBtn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      #roomsList li, #usersList li {
+        padding: 12px 15px;
+      }
+      .listItemPic {
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+      }
+      .msg {
+        max-width: 80%;
+      }
+    }
+    @media (max-width: 480px) {
+      #loginBox {
+        width: 90%;
+        padding: 30px 20px;
+      }
+      .profilePicPreview {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login/Registration -->
+  <div id="loginBox">
+    <h2>💬 WE SECRET</h2>
+    
+    <!-- Tab switcher -->
+    <div style="display:flex;gap:0;margin-bottom:20px;border:2px solid #e0e0e0;border-radius:10px;overflow:hidden;">
+      <button id="loginTab" onclick="switchAuthTab('login')" style="flex:1;padding:12px;background:#667eea;color:white;border:none;font-weight:600;cursor:pointer;">Login</button>
+      <button id="registerTab" onclick="switchAuthTab('register')" style="flex:1;padding:12px;background:#f0f0f0;color:#666;border:none;font-weight:600;cursor:pointer;">Sign Up</button>
+    </div>
+    
+    <!-- Login Form -->
+    <div id="loginForm">
+      <input id="loginEmail" type="email" placeholder="Email" />
+      <input id="loginPassword" type="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+    
+    <!-- Registration Form -->
+    <div id="registerForm" style="display:none;">
+      <div style="text-align:center;margin-bottom:15px;">
+        <div id="registerProfilePicPreview" style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:40px;font-weight:bold;cursor:pointer;position:relative;" onclick="document.getElementById('registerProfilePicInput').click()">
+          📷
+        </div>
+        <input type="file" id="registerProfilePicInput" accept="image/*" style="display:none;" onchange="handleRegisterProfilePicChange(event)">
+        <div style="font-size:12px;color:#999;margin-top:5px;">Click to add profile picture</div>
+      </div>
+      
+      <input id="registerName" type="text" placeholder="Full Name" />
+      <input id="registerEmail" type="email" placeholder="Email" />
+      <input id="registerPhone" type="tel" placeholder="Phone Number (optional)" />
+      <input id="registerPassword1" type="password" placeholder="Password" />
+      <input id="registerPassword2" type="password" placeholder="Confirm Password" />
+      <button onclick="register()">Create Account</button>
+      
+      <div style="font-size:12px;color:#999;margin-top:10px;text-align:center;">
+        Password must be at least 6 characters
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat App -->
+  <div id="app">
+    <div id="sidebar">
+      <div id="sidebarHeader">
+        <div id="profileSection" onclick="openProfileModal()" style="cursor:pointer;">
+          <div class="profilePic" id="userProfilePic"></div>
+          <div>
+            <div id="profileName"></div>
+            <div style="font-size:12px;opacity:0.8;" id="profileEmail"></div>
+          </div>
+        </div>
+        <button class="logoutBtn" onclick="logout()">Logout</button>
+      </div>
+
+      <div id="tabBar">
+        <div class="tab active" onclick="switchTab('chats')">💬 Chats</div>
+        <div class="tab" onclick="switchTab('users')">👥 Users</div>
+      </div>
+
+      <ul id="roomsList"></ul>
+      <ul id="usersList"></ul>
+    </div>
+
+    <div id="chatArea">
+      <div id="emptyState">Select a chat to start messaging</div>
+      <div id="chatHeader" style="display:none;">
+        <button class="iconBtn" onclick="closeChat()" style="display:none;margin-right:10px;" id="backBtn">←</button>
+        <div class="listItemPic" id="chatHeaderPic"></div>
+        <h3 id="chatHeaderName"></h3>
+      </div>
+      <div id="messages" style="display:none;"></div>
+      <div id="inputArea" style="display:none;">
+        <div id="filePreview">
+          <div class="filePreviewContent">
+            <div class="filePreviewIcon" id="previewIcon"></div>
+            <div class="filePreviewInfo">
+              <div class="filePreviewName" id="previewName"></div>
+              <div class="filePreviewSize" id="previewSize"></div>
+            </div>
+          </div>
+          <button class="removeFileBtn" onclick="removeFile()">×</button>
+        </div>
+        <div id="inputControls">
+          <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(event)">
+          <button class="inputBtn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="Attach file">📎</button>
+          <input id="messageInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendMessage()" />
+          <button class="inputBtn" id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Settings Modal -->
+  <div id="profileModal">
+    <div class="modalContent">
+      <div class="modalHeader">
+        <h2>Profile Settings</h2>
+        <button class="closeBtn" onclick="closeProfileModal()">×</button>
+      </div>
+      
+      <div class="profilePicUpload">
+        <div class="profilePicPreview" id="modalProfilePic" onclick="document.getElementById('profilePicInput').click()"></div>
+        <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="handleProfilePicChange(event)">
+        <small style="color:#999;">Click to change profile picture</small>
+      </div>
+
+      <div class="formGroup">
+        <label>Email (Cannot be changed)</label>
+        <input type="email" id="modalEmail" disabled>
+      </div>
+
+      <div class="formGroup">
+        <label>Name</label>
+        <input type="text" id="modalName" placeholder="Enter your name">
+      </div>
+
+      <div class="formGroup">
+        <label>Phone Number</label>
+        <input type="tel" id="modalPhone" placeholder="Enter your phone number">
+      </div>
+
+      <hr style="margin:25px 0;border:none;border-top:1px solid #e0e0e0;">
+
+      <div class="formGroup">
+        <label>Current Password</label>
+        <input type="password" id="currentPassword" placeholder="Enter current password">
+      </div>
+
+      <div class="formGroup">
+        <label>New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password">
+      </div>
+
+      <div class="formGroup">
+        <label>Confirm New Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm new password">
+      </div>
+
+      <button class="btnPrimary" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://172.16.10.34:8000/api/v1";
+    let token = null;
+    let currentUser = null;
+    let currentRoom = null;
+    let currentRoomName = null;
+    let ws = null;
+    let allUsers = [];
+    let selectedFile = null;
+    let registerProfilePicFile = null;
+
+    // Helper function to get headers with ngrok bypass
+    function getHeaders(includeAuth = true, contentType = 'application/json') {
+      const headers = {
+        'ngrok-skip-browser-warning': 'true'
+      };
+      
+      if (contentType) {
+        headers['Content-Type'] = contentType;
+      }
+      
+      if (includeAuth && token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      return headers;
+    }
+
+    // Check for saved session on page load
+    window.onload = function() {
+      const savedToken = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
+      
+      if (savedToken && savedUser) {
+        token = savedToken;
+        currentUser = JSON.parse(savedUser);
+        showApp();
+      }
+    };
+
+    // Switch between login and register tabs
+    function switchAuthTab(tab) {
+      const loginTab = document.getElementById('loginTab');
+      const registerTab = document.getElementById('registerTab');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      
+      if (tab === 'login') {
+        loginTab.style.background = '#667eea';
+        loginTab.style.color = 'white';
+        registerTab.style.background = '#f0f0f0';
+        registerTab.style.color = '#666';
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+      } else {
+        registerTab.style.background = '#667eea';
+        registerTab.style.color = 'white';
+        loginTab.style.background = '#f0f0f0';
+        loginTab.style.color = '#666';
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+      }
+    }
+
+    // Handle profile picture selection during registration
+    function handleRegisterProfilePicChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB');
+        return;
+      }
+      
+      registerProfilePicFile = file;
+      
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('registerProfilePicPreview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function login() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        alert('Please enter email and password');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login/`, {
+          method: "POST",
+          headers: getHeaders(false),
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('Login error:', errorText);
+          alert("Invalid credentials");
+          return;
+        }
+
+        const data = await res.json();
+        token = data.access;
+
+        const userRes = await fetch(`${API_BASE}/auth/user/`, {
+          headers: getHeaders(true)
+        });
+        currentUser = await userRes.json();
+
+        // Save to localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(currentUser));
+
+        showApp();
+      } catch (error) {
+        console.error('Login error:', error);
+        alert("Login failed: " + error.message);
+      }
+    }
+
+    async function register() {
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const phone = document.getElementById('registerPhone').value.trim();
+      const password1 = document.getElementById('registerPassword1').value;
+      const password2 = document.getElementById('registerPassword2').value;
+
+      // Validation
+      if (!name || !email || !password1 || !password2) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      if (password1 !== password2) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      if (password1.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('password1', password1);
+        formData.append('password2', password2);
+        formData.append('name', name);
+        if (phone) formData.append('phone_number', phone);
+        if (registerProfilePicFile) formData.append('profile_picture', registerProfilePicFile);
+
+        const res = await fetch(`${API_BASE}/auth/registration/`, {
+          method: 'POST',
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: formData
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          const errorMessage = Object.values(error).flat().join('\n') || 'Registration failed';
+          alert(errorMessage);
+          return;
+        }
+
+        const data = await res.json();
+        alert('Account created successfully! Please login.');
+        
+        // Switch to login tab and pre-fill email
+        switchAuthTab('login');
+        document.getElementById('loginEmail').value = email;
+        
+        // Clear registration form
+        document.getElementById('registerName').value = '';
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPhone').value = '';
+        document.getElementById('registerPassword1').value = '';
+        document.getElementById('registerPassword2').value = '';
+        document.getElementById('registerProfilePicPreview').innerHTML = '📷';
+        registerProfilePicFile = null;
+        
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('Registration failed. Please try again.');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      if (ws) ws.close();
+      location.reload();
+    }
+
+    function showApp() {
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      
+      // Display user profile
+      const initials = currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase() : '?';
+      const profilePicEl = document.getElementById('userProfilePic');
+      
+      if (currentUser.profile_picture) {
+        profilePicEl.innerHTML = `<img src="${currentUser.profile_picture}" alt="Profile">`;
+      } else {
+        profilePicEl.textContent = initials;
+      }
+      
+      document.getElementById('profileName').textContent = currentUser.name || 'User';
+      document.getElementById('profileEmail').textContent = currentUser.email || '';
+      
+      loadRooms();
+      loadUsers();
+    }
+
+    async function loadRooms() {
+      try {
+        const res = await fetch(`${API_BASE}/chat/rooms/`, {
+          headers: getHeaders(true)
+        });
+        const rooms = await res.json();
+        console.log('Rooms from backend:', rooms); // Debug: check room structure
+        
+        const list = document.getElementById('roomsList');
+        list.innerHTML = '';
+        
+        if (!rooms || rooms.length === 0) {
+          list.innerHTML = '<li style="padding:20px;text-align:center;color:#999;">No chats yet. Go to Users tab to start chatting!</li>';
+          return;
+        }
+        
+        // Load rooms with last message preview
+        for (const room of rooms) {
+          console.log('Processing room:', room); // Debug each room
+          
+          // Try different field names the backend might use
+          let otherUserName = 'Unknown User';
+          
+          if (room.other_user_name) {
+            otherUserName = room.other_user_name;
+          } else if (room.user1_name && room.user2_name) {
+            // Check which user is NOT the current user
+            if (room.user1_name === currentUser.name || room.user1_id === currentUser.id) {
+              otherUserName = room.user2_name;
+            } else {
+              otherUserName = room.user1_name;
+            }
+          } else if (room.user1 && room.user2) {
+            // If backend returns user objects
+            otherUserName = room.user1 === currentUser.id ? room.user2_name : room.user1_name;
+          }
+          
+          const li = document.createElement('li');
+          
+          const pic = document.createElement('div');
+          pic.className = 'listItemPic';
+          pic.textContent = otherUserName ? otherUserName[0].toUpperCase() : '?';
+          
+          const info = document.createElement('div');
+          info.className = 'listItemInfo';
+          
+          const name = document.createElement('div');
+          name.className = 'listItemName';
+          name.textContent = otherUserName;
+          
+          const preview = document.createElement('div');
+          preview.className = 'listItemPreview';
+          preview.textContent = 'Loading...';
+          
+          // Fetch last message for this room
+          getLastMessage(room.id).then(lastMsg => {
+            if (lastMsg) {
+              const content = lastMsg.content || lastMsg.message || '';
+              const hasFile = lastMsg.file;
+              const sender = lastMsg.sender_id === currentUser.id ? 'You: ' : '';
+              
+              let previewText = '';
+              if (content) {
+                previewText = content.length > 40 ? content.substring(0, 40) + '...' : content;
+              } else if (hasFile) {
+                previewText = '📎 File';
+              } else {
+                previewText = 'Message';
+              }
+              
+              preview.textContent = sender + previewText;
+            } else {
+              preview.textContent = 'No messages yet';
+            }
+          }).catch(() => {
+            preview.textContent = 'Tap to chat';
+          });
+          
+          info.appendChild(name);
+          info.appendChild(preview);
+          li.appendChild(pic);
+          li.appendChild(info);
+          li.onclick = () => joinRoom(room.id, otherUserName, li);
+          list.appendChild(li);
+        }
+      } catch (error) {
+        console.error('Error loading rooms:', error);
+      }
+    }
+
+    async function getLastMessage(roomId) {
+      try {
+        const res = await fetch(`${API_BASE}/chat/rooms/${roomId}/messages/`, {
+          headers: getHeaders(true)
+        });
+        if (!res.ok) return null;
+        
+        const messages = await res.json();
+        return messages.length > 0 ? messages[messages.length - 1] : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_BASE}/auth/users/`, {
+          headers: getHeaders(true)
+        });
+        allUsers = await res.json();
+        displayUsers();
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+
+    function displayUsers() {
+      const list = document.getElementById('usersList');
+      list.innerHTML = '';
+      
+      // Filter out current user
+      const otherUsers = allUsers.filter(user => user.id !== currentUser.id);
+      
+      if (otherUsers.length === 0) {
+        list.innerHTML = '<li style="padding:20px;text-align:center;color:#999;">No other users found</li>';
+        return;
+      }
+      
+      otherUsers.forEach(user => {
+        const li = document.createElement('li');
+        
+        const pic = document.createElement('div');
+        pic.className = 'listItemPic';
+        if (user.profile_picture) {
+          pic.innerHTML = `<img src="${user.profile_picture}" alt="${user.name}">`;
+        } else {
+          const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '?';
+          pic.textContent = initials;
+        }
+        
+        const info = document.createElement('div');
+        info.className = 'listItemInfo';
+        
+        const name = document.createElement('div');
+        name.className = 'listItemName';
+        name.textContent = user.name || user.email;
+        
+        const email = document.createElement('div');
+        email.className = 'listItemPreview';
+        email.textContent = user.email;
+        
+        info.appendChild(name);
+        info.appendChild(email);
+        li.appendChild(pic);
+        li.appendChild(info);
+        li.onclick = () => createOrOpenRoom(user);
+        list.appendChild(li);
+      });
+    }
+
+    async function createOrOpenRoom(user) {
+      try {
+        // Create or get existing room
+        const res = await fetch(`${API_BASE}/chat/rooms/`, {
+          method: 'POST',
+          headers: getHeaders(true),
+          body: JSON.stringify({ user2_id: user.id })
+        });
+        
+        const room = await res.json();
+        
+        // Switch to chats tab
+        switchTab('chats');
+        
+        // Reload rooms to show new chat
+        await loadRooms();
+        
+        // Find and click the room
+        const roomsList = document.getElementById('roomsList');
+        const roomItems = roomsList.querySelectorAll('li');
+        roomItems.forEach(li => {
+          if (li.querySelector('.listItemName')?.textContent === user.name) {
+            li.click();
+          }
+        });
+      } catch (error) {
+        console.error('Error creating room:', error);
+        alert('Failed to create chat room');
+      }
+    }
+
+    function switchTab(tab) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      
+      if (tab === 'chats') {
+        tabs[0].classList.add('active');
+        document.getElementById('roomsList').style.display = 'block';
+        document.getElementById('usersList').style.display = 'none';
+      } else {
+        tabs[1].classList.add('active');
+        document.getElementById('roomsList').style.display = 'none';
+        document.getElementById('usersList').style.display = 'block';
+      }
+    }
+
+    async function joinRoom(roomId, roomName, liElement) {
+      if (ws) ws.close();
+      
+      document.querySelectorAll('#roomsList li').forEach(li => li.classList.remove('active'));
+      if (liElement) liElement.classList.add('active');
+
+      currentRoom = roomId;
+      currentRoomName = roomName;
+      
+      // Show chat UI
+      document.getElementById('emptyState').style.display = 'none';
+      document.getElementById('chatHeader').style.display = 'flex';
+      document.getElementById('messages').style.display = 'flex';
+      document.getElementById('inputArea').style.display = 'flex';
+      
+      // Mobile: Show back button and activate chat area
+      if (window.innerWidth <= 768) {
+        document.getElementById('backBtn').style.display = 'block';
+        document.getElementById('chatArea').classList.add('active');
+      }
+      
+      // Update header
+      document.getElementById('chatHeaderName').textContent = roomName;
+      document.getElementById('chatHeaderPic').textContent = roomName[0].toUpperCase();
+      
+      document.getElementById('messages').innerHTML = '';
+
+      // Load previous messages from database
+      await loadPreviousMessages(roomId);
+
+      // Use wss:// for secure ngrok connection
+      const wsUrl = API_BASE.includes('ngrok') 
+        ? `wss://172.16.10.34:8000/ws/chat/${roomId}/`
+        : `ws://172.16.10.34:8000/ws/chat/${roomId}/`;
+      
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => console.log("Connected to room:", roomId);
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const messageContent = data.message || data.content;
+        const timestamp = data.timestamp || new Date().toISOString();
+        const fileUrl = data.file || null;
+        const fileName = fileUrl ? getFileNameFromUrl(fileUrl) : null;
+        
+        appendMessage(
+          messageContent,
+          data.sender_id === currentUser.id ? 'you' : 'other',
+          timestamp,
+          fileUrl,
+          fileName,
+          null
+        );
+      };
+      ws.onclose = () => console.log("WebSocket closed");
+    }
+
+    async function loadPreviousMessages(roomId) {
+      try {
+        const res = await fetch(`${API_BASE}/chat/rooms/${roomId}/messages/`, {
+          headers: getHeaders(true)
+        });
+
+        if (!res.ok) {
+          console.error('Failed to load previous messages');
+          return;
+        }
+
+        const messages = await res.json();
+        console.log('Loaded messages:', messages);
+        messages.forEach(msg => {
+          const senderId = msg.sender_id || msg.sender;
+          const messageContent = msg.content || msg.message;
+          const timestamp = msg.timestamp || msg.created_at || null;
+          const fileUrl = msg.file || null;
+          const fileName = fileUrl ? getFileNameFromUrl(fileUrl) : null;
+          
+          appendMessage(
+            messageContent, 
+            senderId === currentUser.id ? 'you' : 'other', 
+            timestamp,
+            fileUrl,
+            fileName,
+            null
+          );
+        });
+      } catch (error) {
+        console.error('Error loading previous messages:', error);
+      }
+    }
+
+    function appendMessage(content, who, timestamp = null, fileUrl = null, fileName = null, fileSize = null) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `msg ${who}`;
+      
+      // Add text message if exists
+      if (content && content.trim()) {
+        const textSpan = document.createElement('span');
+        textSpan.textContent = content;
+        msgDiv.appendChild(textSpan);
+      }
+      
+      // Add file attachment if exists
+      if (fileUrl) {
+        const fileDiv = createFileAttachment(fileUrl, fileName, fileSize);
+        msgDiv.appendChild(fileDiv);
+      }
+      
+      // Add timestamp
+      if (timestamp) {
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'timestamp';
+        timeSpan.textContent = formatTimestamp(timestamp);
+        msgDiv.appendChild(timeSpan);
+      }
+      
+      // Only append if there's content or a file
+      if (msgDiv.children.length > 0) {
+        document.getElementById('messages').appendChild(msgDiv);
+        document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+      }
+    }
+
+    function createFileAttachment(fileUrl, fileName, fileSize) {
+      const fileDiv = document.createElement('div');
+      fileDiv.className = 'fileAttachment';
+      fileDiv.onclick = () => window.open(fileUrl, '_blank');
+      
+      // File icon
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'fileIcon';
+      
+      // Check if it's an image
+      const isImage = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(fileName || fileUrl);
+      if (isImage) {
+        iconDiv.innerHTML = `<img src="${fileUrl}" alt="Image">`;
+      } else {
+        iconDiv.innerHTML = getFileIcon(fileName || fileUrl);
+      }
+      
+      // File info
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'fileInfo';
+      
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'fileName';
+      nameDiv.textContent = fileName || getFileNameFromUrl(fileUrl);
+      
+      const sizeDiv = document.createElement('div');
+      sizeDiv.className = 'fileSize';
+      sizeDiv.textContent = fileSize ? formatFileSize(fileSize) : 'File';
+      
+      infoDiv.appendChild(nameDiv);
+      infoDiv.appendChild(sizeDiv);
+      
+      // Download icon
+      const downloadDiv = document.createElement('div');
+      downloadDiv.className = 'downloadIcon';
+      downloadDiv.innerHTML = '⬇';
+      
+      fileDiv.appendChild(iconDiv);
+      fileDiv.appendChild(infoDiv);
+      fileDiv.appendChild(downloadDiv);
+      
+      return fileDiv;
+    }
+
+    function getFileNameFromUrl(url) {
+      try {
+        return url.split('/').pop().split('?')[0] || 'File';
+      } catch {
+        return 'File';
+      }
+    }
+
+    function formatTimestamp(timestamp) {
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diff = now - date;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      if (days < 7) return `${days}d ago`;
+      
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    // File handling functions
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      // Max file size: 10MB
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        event.target.value = '';
+        return;
+      }
+      
+      selectedFile = file;
+      showFilePreview(file);
+    }
+
+    function showFilePreview(file) {
+      const preview = document.getElementById('filePreview');
+      const icon = document.getElementById('previewIcon');
+      const name = document.getElementById('previewName');
+      const size = document.getElementById('previewSize');
+      
+      // Show preview
+      preview.classList.add('show');
+      name.textContent = file.name;
+      size.textContent = formatFileSize(file.size);
+      
+      // Show icon or image preview
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          icon.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        icon.innerHTML = getFileIcon(file.name);
+      }
+    }
+
+    function removeFile() {
+      selectedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('filePreview').classList.remove('show');
+    }
+
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      const icons = {
+        'pdf': '📄',
+        'doc': '📝', 'docx': '📝',
+        'xls': '📊', 'xlsx': '📊',
+        'ppt': '📊', 'pptx': '📊',
+        'zip': '🗜️', 'rar': '🗜️',
+        'mp3': '🎵', 'wav': '🎵',
+        'mp4': '🎥', 'avi': '🎥',
+        'txt': '📃'
+      };
+      return icons[ext] || '📎';
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      
+      // Need either message or file
+      if (!message && !selectedFile) return;
+      if (!currentRoom) return;
+      
+      // If file is attached, send via API
+      if (selectedFile) {
+        await sendMessageWithFile(message, selectedFile);
+        input.value = '';
+        removeFile();
+        return;
+      }
+      
+      // Otherwise send via WebSocket
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify({
+        message: message,
+        sender_id: currentUser.id
+      }));
+      input.value = '';
+    }
+
+    async function sendMessageWithFile(message, file) {
+      try {
+        const formData = new FormData();
+        if (message) formData.append('content', message);
+        formData.append('file', file);
+        formData.append('sender', currentUser.id);
+        formData.append('room', currentRoom);
+        
+        const res = await fetch(`${API_BASE}/chat/rooms/${currentRoom}/messages/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: formData
+        });
+        
+        if (!res.ok) {
+          throw new Error('Failed to send message');
+        }
+        
+        const sentMessage = await res.json();
+        
+        // Display the message locally
+        const content = sentMessage.content || sentMessage.message || '';
+        const fileUrl = sentMessage.file;
+        const timestamp = sentMessage.timestamp || new Date().toISOString();
+        
+        appendMessage(content, 'you', timestamp, fileUrl, file.name, file.size);
+        
+      } catch (error) {
+        console.error('Error sending file:', error);
+        alert('Failed to send file. Please try again.');
+      }
+    }
+
+    // Mobile Navigation
+    function closeChat() {
+      document.getElementById('chatArea').classList.remove('active');
+      if (ws) ws.close();
+    }
+
+    // Profile Modal Functions
+    function openProfileModal() {
+      const modal = document.getElementById('profileModal');
+      modal.classList.add('show');
+      
+      // Populate modal with current user data
+      document.getElementById('modalEmail').value = currentUser.email || '';
+      document.getElementById('modalName').value = currentUser.name || '';
+      document.getElementById('modalPhone').value = currentUser.phone_number || '';
+      
+      const modalPic = document.getElementById('modalProfilePic');
+      if (currentUser.profile_picture) {
+        modalPic.innerHTML = `<img src="${currentUser.profile_picture}" alt="Profile">`;
+      } else {
+        const initials = currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase() : '?';
+        modalPic.textContent = initials;
+        modalPic.innerHTML = initials;
+      }
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('show');
+      // Clear password fields
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+    }
+
+    let selectedProfilePicFile = null;
+
+    function handleProfilePicChange(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      selectedProfilePicFile = file;
+      
+      // Preview the image
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('modalProfilePic').innerHTML = `<img src="${e.target.result}" alt="Profile">`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveProfile() {
+      const name = document.getElementById('modalName').value.trim();
+      const phone = document.getElementById('modalPhone').value.trim();
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      // Validate password change if attempted
+      if (newPassword || confirmPassword || currentPassword) {
+        if (!currentPassword) {
+          alert('Please enter your current password');
+          return;
+        }
+        if (newPassword !== confirmPassword) {
+          alert('New passwords do not match');
+          return;
+        }
+        if (newPassword.length < 6) {
+          alert('New password must be at least 6 characters');
+          return;
+        }
+      }
+      
+      try {
+        const formData = new FormData();
+        if (name) formData.append('name', name);
+        if (phone) formData.append('phone_number', phone);
+        if (selectedProfilePicFile) formData.append('profile_picture', selectedProfilePicFile);
+        if (currentPassword && newPassword) {
+          formData.append('current_password', currentPassword);
+          formData.append('new_password', newPassword);
+        }
+        
+        const res = await fetch(`${API_BASE}/auth/user/`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: formData
+        });
+        
+        if (!res.ok) {
+          const error = await res.json();
+          alert(error.detail || error.message || 'Failed to update profile');
+          return;
+        }
+        
+        const updatedUser = await res.json();
+        currentUser = updatedUser;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        
+        // Update UI
+        showApp();
+        closeProfileModal();
+        alert('Profile updated successfully!');
+        
+        selectedProfilePicFile = null;
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile. Please try again.');
+      }
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('profileModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeProfileModal();
+      }
+    });
+  </script>
+</body>
+</html>
